@@ -2,6 +2,8 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local PlayerData = QBCore.Functions.GetPlayerData() -- Just for resource restart (same as event handler)
 local insideZones = {}
+local testDriveZone = nil
+local vehicleMenu
 
 for name in pairs(Config.Shops) do -- foreach shop
     insideZones[name] = false  -- default to not being in a shop
@@ -89,6 +91,7 @@ end
 
 local function comma_value(amount)
     local formatted = amount
+    local k
     while true do
         formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
         if k == 0 then
@@ -408,7 +411,6 @@ end)
 RegisterNetEvent('qb-vehicleshop:client:customTestDrive', function(data)
     if not inTestDrive then
         inTestDrive = true
-        shopInsideOf = getShopInsideOf()
         local vehicle = data
         local prevCoords = GetEntityCoords(PlayerPedId())
         QBCore.Functions.SpawnVehicle(vehicle, function(veh)
@@ -430,9 +432,9 @@ RegisterNetEvent('qb-vehicleshop:client:customTestDrive', function(data)
                     QBCore.Functions.Notify('Vehicle test drive complete')
                 end
             end)
-        end, Config.Shops[shopInsideOf]["VehicleSpawn"], false)
+        end, Config.Shops[getShopInsideOf()]["VehicleSpawn"], false)
         createTestDriveReturn()
-        startTestDriveTimer(Config.Shops[shopInsideOf]["TestDriveTimeLimit"] * 60)
+        startTestDriveTimer(Config.Shops[getShopInsideOf()]["TestDriveTimeLimit"] * 60)
     else
         QBCore.Functions.Notify('Already in test drive', 'error')
     end
@@ -478,7 +480,7 @@ RegisterNetEvent('qb-vehicleshop:client:vehCategories', function()
 end)
 
 RegisterNetEvent('qb-vehicleshop:client:openVehCats', function(data)
-    local vehicleMenu = {
+    local vehMenu = {
         {
             header = 'Go Back',
             icon = "fa-solid fa-angle-left",
@@ -489,7 +491,7 @@ RegisterNetEvent('qb-vehicleshop:client:openVehCats', function(data)
     }
     for k,v in pairs(QBCore.Shared.Vehicles) do
         if QBCore.Shared.Vehicles[k]["category"] == data.catName and QBCore.Shared.Vehicles[k]["shop"] == getShopInsideOf() then
-            vehicleMenu[#vehicleMenu + 1] = {
+            vehMenu[#vehMenu + 1] = {
                 header = v.name,
                 txt = 'Price: $'..v.price,
                 icon = "fa-solid fa-car-side",
@@ -505,7 +507,7 @@ RegisterNetEvent('qb-vehicleshop:client:openVehCats', function(data)
             }
         end
     end
-    exports['qb-menu']:openMenu(vehicleMenu)
+    exports['qb-menu']:openMenu(vehMenu)
 end)
 
 RegisterNetEvent('qb-vehicleshop:client:openFinance', function(data)
@@ -611,7 +613,7 @@ end)
 RegisterNetEvent('qb-vehicleshop:client:getVehicles', function()
     QBCore.Functions.TriggerCallback('qb-vehicleshop:server:getVehicles', function(vehicles)
         local ownedVehicles = {}
-        for k,v in pairs(vehicles) do
+        for _, v in pairs(vehicles) do
             if v.balance ~= 0 then
                 local name = QBCore.Shared.Vehicles[v.vehicle]["name"]
                 local plate = v.plate:upper()
