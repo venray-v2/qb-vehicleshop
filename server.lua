@@ -196,7 +196,7 @@ RegisterNetEvent('qb-vehicleshop:server:buyShowroomVehicle', function(vehicle)
     local vehiclePrice = QBCore.Shared.Vehicles[vehicle]['price']
     local plate = GeneratePlate()
     if cash > vehiclePrice then
-        MySQL.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, garage, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', {
+        MySQL.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, garage, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
             pData.PlayerData.license,
             cid,
             vehicle,
