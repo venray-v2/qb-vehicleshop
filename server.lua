@@ -427,24 +427,18 @@ end)
 RegisterNetEvent('qb-vehicleshop:server:checkFinance', function()
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
-    local result = MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
-    for _, v in pairs(result) do
-        if v.balance >= 1 and v.financetime < 1 then
-            paymentDue = true
-        end
-    end
-    if paymentDue then
-        TriggerClientEvent('QBCore:Notify', src, 'Your vehicle payment is due within '..Config.PaymentWarning..' minutes')
+    local query = 'SELECT * FROM player_vehicles WHERE citizenid = ? AND balance > 0 AND financetime < 1'
+    local result = MySQL.query.await(query, {player.PlayerData.citizenid})
+    if result[1] then
+        TriggerClientEvent('QBCore:Notify', src, 'Your vehicle payment is due within '..Config.PaymentWarning..' minutes.')
         Wait(Config.PaymentWarning * 60000)
-        MySQL.query.await('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid}, function(vehicles)
-            for _, v in pairs(vehicles) do
-                if v.balance >= 1 and v.financetime < 1 then
-                    local plate = v.plate
-                    MySQL.query('DELETE FROM player_vehicles WHERE plate = @plate', {['@plate'] = plate})
-                    TriggerClientEvent('QBCore:Notify', src, 'Your vehicle with plate '..plate..' has been repossessed', 'error')
-                end
-            end
-        end)
+        local vehicles = MySQL.query.await(query, {player.PlayerData.citizenid})
+        for _, v in pairs(vehicles) do
+            local plate = v.plate
+            MySQL.query('DELETE FROM player_vehicles WHERE plate = @plate', {['@plate'] = plate})
+            --MySQL.update('UPDATE player_vehicles SET citizenid = ? WHERE plate = ?', {'REPO-'..v.citizenid, plate}) -- Use this if you don't want them to be deleted
+            TriggerClientEvent('QBCore:Notify', src, 'Your vehicle with plate '..plate..' has been repossessed!', 'error')
+        end
     end
 end)
 
