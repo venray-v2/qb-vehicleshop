@@ -1,6 +1,6 @@
 -- Variables
 local QBCore = exports['qb-core']:GetCoreObject()
-local PlayerData = QBCore.Functions.GetPlayerData() -- Just for resource restart (same as event handler)
+local PlayerData = QBCore.Functions.GetPlayerData()-- Just for resource restart (same as event handler)
 local testDriveZone = nil
 local vehicleMenu
 
@@ -11,7 +11,6 @@ local zones = {}
 local insideShop = nil
 
 -- Handlers
-
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     PlayerData = QBCore.Functions.GetPlayerData()
     local citizenid = PlayerData.citizenid
@@ -31,7 +30,6 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
 end)
 
 -- Static Headers
-
 local vehHeaderMenu = {
     {
         header = Lang:t('menus.vehHeader_header'),
@@ -65,16 +63,15 @@ local returnTestDrive = {
 }
 
 -- Functions
-
-local function drawTxt(text,font,x,y,scale,r,g,b,a)
-	SetTextFont(font)
-	SetTextScale(scale,scale)
-	SetTextColour(r,g,b,a)
-	SetTextOutline()
-	SetTextCentre(1)
-	SetTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawText(x,y)
+local function drawTxt(text, font, x, y, scale, r, g, b, a)
+    SetTextFont(font)
+    SetTextScale(scale, scale)
+    SetTextColour(r, g, b, a)
+    SetTextOutline()
+    SetTextCentre(1)
+    SetTextEntry("STRING")
+    AddTextComponentString(text)
+    DrawText(x, y)
 end
 
 local function comma_value(amount)
@@ -129,12 +126,12 @@ local function createTestDriveReturn()
         3.0,
         5.0,
         {
-            name = "box_zone_testdrive_return_"..insideShop,
+            name = "box_zone_testdrive_return_" .. insideShop,
         })
 
     testDriveZone:onPlayerInOut(function(isPointInside)
         if isPointInside and IsPedInAnyVehicle(PlayerPedId()) then
-			SetVehicleForwardSpeed(GetVehiclePedIsIn(PlayerPedId(), false), 0)
+            SetVehicleForwardSpeed(GetVehiclePedIsIn(PlayerPedId(), false), 0)
             exports['qb-menu']:openMenu(returnTestDrive)
         else
             exports['qb-menu']:closeMenu()
@@ -148,7 +145,7 @@ local function startTestDriveTimer(testDriveTime)
         while inTestDrive do
             if GetGameTimer() < gameTimer + tonumber(1000 * testDriveTime) then
                 local secondsLeft = GetGameTimer() - gameTimer
-                drawTxt(Lang:t('general.testdrive_timer')..math.ceil(testDriveTime - secondsLeft / 1000), 4, 0.5, 0.93, 0.50, 255, 255, 255, 180)
+                drawTxt(Lang:t('general.testdrive_timer') .. math.ceil(testDriveTime - secondsLeft / 1000), 4, 0.5, 0.93, 0.50, 255, 255, 255, 180)
             end
             Wait(0)
         end
@@ -158,18 +155,18 @@ end
 local function createVehZones(shopName, entity)
     if not Config.UsingTarget then
         for i = 1, #Config.Shops[shopName]['ShowroomVehicles'] do
-            zones[#zones+1] = BoxZone:Create(
+            zones[#zones + 1] = BoxZone:Create(
                 vector3(Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].x,
-                Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].y,
-                Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].z),
+                    Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].y,
+                    Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].z),
                 Config.Shops[shopName]['Zone']['size'], --2.75
                 Config.Shops[shopName]['Zone']['size'],
-            {
-                name = "box_zone_"..shopName.."_"..i,
-                minZ = Config.Shops[shopName]['Zone']['minZ'],
-                maxZ = Config.Shops[shopName]['Zone']['maxZ'],
-                debugPoly = false,
-            })
+                {
+                    name = "box_zone_" .. shopName .. "_" .. i,
+                    minZ = Config.Shops[shopName]['Zone']['minZ'],
+                    maxZ = Config.Shops[shopName]['Zone']['maxZ'],
+                    debugPoly = false,
+                })
         end
         local combo = ComboZone:Create(zones, {name = "vehCombo", debugPoly = false})
         combo:onPlayerInOut(function(isPointInside)
@@ -201,10 +198,9 @@ local function createVehZones(shopName, entity)
 end
 
 -- Zones
-
 function createFreeUseShop(shopShape, name)
-    local zone = PolyZone:Create(shopShape, {  -- create the zone
-        name= name,
+    local zone = PolyZone:Create(shopShape, {-- create the zone
+        name = name,
         minZ = shopShape.minZ,
         maxZ = shopShape.maxZ
     })
@@ -219,7 +215,7 @@ function createFreeUseShop(shopShape, name)
                         {
                             isMenuHeader = true,
                             icon = "fa-solid fa-circle-info",
-                            header = getVehBrand():upper()..' '..getVehName():upper()..' - $'..getVehPrice(),
+                            header = getVehBrand():upper() .. ' ' .. getVehName():upper() .. ' - $' .. getVehPrice(),
                         },
                         {
                             header = Lang:t('menus.test_header'),
@@ -273,8 +269,8 @@ function createFreeUseShop(shopShape, name)
 end
 
 function createManagedShop(shopShape, name)
-    local zone = PolyZone:Create(shopShape, {  -- create the zone
-        name= name,
+    local zone = PolyZone:Create(shopShape, {-- create the zone
+        name = name,
         minZ = shopShape.minZ,
         maxZ = shopShape.maxZ
     })
@@ -289,7 +285,7 @@ function createManagedShop(shopShape, name)
                         {
                             isMenuHeader = true,
                             icon = "fa-solid fa-circle-info",
-                            header = getVehBrand():upper()..' '..getVehName():upper()..' - $'..getVehPrice(),
+                            header = getVehBrand():upper() .. ' ' .. getVehName():upper() .. ' - $' .. getVehPrice(),
                         },
                         {
                             header = Lang:t('menus.test_header'),
@@ -355,7 +351,6 @@ for name, shop in pairs(Config.Shops) do
 end
 
 -- Events
-
 RegisterNetEvent('qb-vehicleshop:client:homeMenu', function()
     exports['qb-menu']:openMenu(vehicleMenu)
 end)
@@ -452,7 +447,7 @@ RegisterNetEvent('qb-vehicleshop:client:vehCategories', function()
             }
         }
     }
-    for k,v in pairs(Config.Shops[insideShop]['Categories']) do
+    for k, v in pairs(Config.Shops[insideShop]['Categories']) do
         categoryMenu[#categoryMenu + 1] = {
             header = v,
             icon = "fa-solid fa-circle",
@@ -477,11 +472,11 @@ RegisterNetEvent('qb-vehicleshop:client:openVehCats', function(data)
             }
         }
     }
-    for k,v in pairs(QBCore.Shared.Vehicles) do
+    for k, v in pairs(QBCore.Shared.Vehicles) do
         if QBCore.Shared.Vehicles[k]["category"] == data.catName and QBCore.Shared.Vehicles[k]["shop"] == insideShop then
             vehMenu[#vehMenu + 1] = {
                 header = v.name,
-                txt = Lang:t('menus.veh_price')..v.price,
+                txt = Lang:t('menus.veh_price') .. v.price,
                 icon = "fa-solid fa-car-side",
                 params = {
                     isServer = true,
@@ -500,20 +495,20 @@ end)
 
 RegisterNetEvent('qb-vehicleshop:client:openFinance', function(data)
     local dialog = exports['qb-input']:ShowInput({
-        header = getVehBrand():upper()..' '..data.buyVehicle:upper()..' - $'..data.price,
+        header = getVehBrand():upper() .. ' ' .. data.buyVehicle:upper() .. ' - $' .. data.price,
         submitText = Lang:t('menus.submit_text'),
         inputs = {
             {
                 type = 'number',
                 isRequired = true,
                 name = 'downPayment',
-                text = Lang:t('menus.financesubmit_downpayment')..Config.MinimumDown..'%'
+                text = Lang:t('menus.financesubmit_downpayment') .. Config.MinimumDown .. '%'
             },
             {
                 type = 'number',
                 isRequired = true,
                 name = 'paymentAmount',
-                text = Lang:t('menus.financesubmit_totalpayment')..Config.MaximumPayments
+                text = Lang:t('menus.financesubmit_totalpayment') .. Config.MaximumPayments
             }
         }
     })
@@ -526,20 +521,20 @@ end)
 RegisterNetEvent('qb-vehicleshop:client:openCustomFinance', function(data)
     TriggerEvent('animations:client:EmoteCommandStart', {"tablet2"})
     local dialog = exports['qb-input']:ShowInput({
-        header = getVehBrand():upper()..' '..data.vehicle:upper()..' - $'..data.price,
+        header = getVehBrand():upper() .. ' ' .. data.vehicle:upper() .. ' - $' .. data.price,
         submitText = Lang:t('menus.submit_text'),
         inputs = {
             {
                 type = 'number',
                 isRequired = true,
                 name = 'downPayment',
-                text = Lang:t('menus.financesubmit_downpayment')..Config.MinimumDown..'%'
+                text = Lang:t('menus.financesubmit_downpayment') .. Config.MinimumDown .. '%'
             },
             {
                 type = 'number',
                 isRequired = true,
                 name = 'paymentAmount',
-                text = Lang:t('menus.financesubmit_totalpayment')..Config.MaximumPayments
+                text = Lang:t('menus.financesubmit_totalpayment') .. Config.MaximumPayments
             },
             {
                 text = Lang:t('menus.submit_ID'),
@@ -577,7 +572,7 @@ RegisterNetEvent('qb-vehicleshop:client:swapVehicle', function(data)
         end
         SetModelAsNoLongerNeeded(model)
         SetVehicleOnGroundProperly(veh)
-        SetEntityInvincible(veh,true)
+        SetEntityInvincible(veh, true)
         SetEntityHeading(veh, Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.w)
         SetVehicleDoorsLocked(veh, 3)
         FreezeEntityPosition(veh, true)
@@ -607,7 +602,7 @@ RegisterNetEvent('qb-vehicleshop:client:getVehicles', function()
                 local plate = v.plate:upper()
                 ownedVehicles[#ownedVehicles + 1] = {
                     header = name,
-                    txt = Lang:t('menus.veh_platetxt')..plate,
+                    txt = Lang:t('menus.veh_platetxt') .. plate,
                     icon = "fa-solid fa-car-side",
                     params = {
                         event = 'qb-vehicleshop:client:getVehicleFinance',
@@ -641,7 +636,7 @@ RegisterNetEvent('qb-vehicleshop:client:getVehicleFinance', function(data)
             isMenuHeader = true,
             icon = "fa-solid fa-sack-dollar",
             header = Lang:t('menus.veh_finance_balance'),
-            txt = Lang:t('menus.veh_finance_currency')..comma_value(data.balance)
+            txt = Lang:t('menus.veh_finance_currency') .. comma_value(data.balance)
         },
         {
             isMenuHeader = true,
@@ -653,7 +648,7 @@ RegisterNetEvent('qb-vehicleshop:client:getVehicleFinance', function(data)
             isMenuHeader = true,
             icon = "fa-solid fa-sack-dollar",
             header = Lang:t('menus.veh_finance_reccuring'),
-            txt = Lang:t('menus.veh_finance_currency')..comma_value(data.paymentAmount)
+            txt = Lang:t('menus.veh_finance_currency') .. comma_value(data.paymentAmount)
         },
         {
             header = Lang:t('menus.veh_finance_pay'),
@@ -726,20 +721,19 @@ RegisterNetEvent('qb-vehicleshop:client:openIdMenu', function(data)
 end)
 
 -- Threads
-
 CreateThread(function()
     for k, v in pairs(Config.Shops) do
         if v.showBlip then
             local Dealer = AddBlipForCoord(Config.Shops[k]["Location"])
-            SetBlipSprite (Dealer, Config.Shops[k]["blipSprite"])
+            SetBlipSprite(Dealer, Config.Shops[k]["blipSprite"])
             SetBlipDisplay(Dealer, 4)
-            SetBlipScale  (Dealer, 0.70)
+            SetBlipScale(Dealer, 0.70)
             SetBlipAsShortRange(Dealer, true)
             SetBlipColour(Dealer, Config.Shops[k]["blipColor"])
             BeginTextCommandSetBlipName("STRING")
             AddTextComponentSubstringPlayerName(Config.Shops[k]["ShopLabel"])
             EndTextCommandSetBlipName(Dealer)
-	    end
+        end
     end
 end)
 
@@ -748,8 +742,8 @@ CreateThread(function()
         name = "vehicleshop_financeZone",
         offset = {0.0, 0.0, 0.0},
         scale = {1.0, 1.0, 1.0},
-	    minZ  = Config.FinanceZone.z-1,
-        maxZ  = Config.FinanceZone.z+1,
+        minZ = Config.FinanceZone.z - 1,
+        maxZ = Config.FinanceZone.z + 1,
         debugPoly = false,
     })
 
@@ -774,11 +768,11 @@ CreateThread(function()
             SetModelAsNoLongerNeeded(model)
             SetEntityAsMissionEntity(veh, true, true)
             SetVehicleOnGroundProperly(veh)
-            SetEntityInvincible(veh,true)
+            SetEntityInvincible(veh, true)
             SetVehicleDirtLevel(veh, 0.0)
             SetVehicleDoorsLocked(veh, 3)
             SetEntityHeading(veh, Config.Shops[k]["ShowroomVehicles"][i].coords.w)
-            FreezeEntityPosition(veh,true)
+            FreezeEntityPosition(veh, true)
             SetVehicleNumberPlateText(veh, 'BUY ME')
             if Config.UsingTarget then createVehZones(k, veh) end
         end
