@@ -1,7 +1,6 @@
 -- Variables
 local QBCore = exports['qb-core']:GetCoreObject()
 local financetimer = {}
-local paymentDue = false
 
 -- Handlers
 
