@@ -1,13 +1,12 @@
 -- Variables
 local QBCore = exports['qb-core']:GetCoreObject()
-local PlayerData = QBCore.Functions.GetPlayerData()-- Just for resource restart (same as event handler)
+local PlayerData = QBCore.Functions.GetPlayerData()
 local testDriveZone = nil
-local vehicleMenu
-
+local vehicleMenu = {}
+local Initialized = false
 local testDriveVeh, inTestDrive = 0, false
 local ClosestVehicle = 1
 local zones = {}
-
 local insideShop = nil
 
 -- Handlers
@@ -17,6 +16,7 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     local gameTime = GetGameTimer()
     TriggerServerEvent('qb-vehicleshop:server:addPlayer', citizenid, gameTime)
     TriggerServerEvent('qb-vehicleshop:server:checkFinance')
+    if not Initialized then Init() end
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
@@ -159,7 +159,7 @@ local function createVehZones(shopName, entity)
                 vector3(Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].x,
                     Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].y,
                     Config.Shops[shopName]['ShowroomVehicles'][i]['coords'].z),
-                Config.Shops[shopName]['Zone']['size'], --2.75
+                Config.Shops[shopName]['Zone']['size'],
                 Config.Shops[shopName]['Zone']['size'],
                 {
                     name = "box_zone_" .. shopName .. "_" .. i,
@@ -199,7 +199,7 @@ end
 
 -- Zones
 function createFreeUseShop(shopShape, name)
-    local zone = PolyZone:Create(shopShape, {-- create the zone
+    local zone = PolyZone:Create(shopShape, {
         name = name,
         minZ = shopShape.minZ,
         maxZ = shopShape.maxZ
@@ -262,14 +262,14 @@ function createFreeUseShop(shopShape, name)
                 end
             end)
         else
-            insideShop = nil -- leave the shops zone
+            insideShop = nil
             ClosestVehicle = 1
         end
     end)
 end
 
 function createManagedShop(shopShape, name)
-    local zone = PolyZone:Create(shopShape, {-- create the zone
+    local zone = PolyZone:Create(shopShape, {
         name = name,
         minZ = shopShape.minZ,
         maxZ = shopShape.maxZ
@@ -336,18 +336,64 @@ function createManagedShop(shopShape, name)
                 end
             end)
         else
-            insideShop = nil -- leave the shops zone
+            insideShop = nil
             ClosestVehicle = 1
         end
     end)
 end
 
-for name, shop in pairs(Config.Shops) do
-    if shop['Type'] == 'free-use' then
-        createFreeUseShop(shop['Zone']['Shape'], name)
-    elseif shop['Type'] == 'managed' then
-        createManagedShop(shop['Zone']['Shape'], name)
-    end
+function Init()
+    Initialized = true
+    CreateThread(function()
+        for name, shop in pairs(Config.Shops) do
+            if shop['Type'] == 'free-use' then
+                createFreeUseShop(shop['Zone']['Shape'], name)
+            elseif shop['Type'] == 'managed' then
+                createManagedShop(shop['Zone']['Shape'], name)
+            end
+        end
+    end)
+    CreateThread(function()
+        local financeZone = BoxZone:Create(Config.FinanceZone, 2.0, 2.0, {
+            name = "vehicleshop_financeZone",
+            offset = {0.0, 0.0, 0.0},
+            scale = {1.0, 1.0, 1.0},
+            minZ = Config.FinanceZone.z - 1,
+            maxZ = Config.FinanceZone.z + 1,
+            debugPoly = false,
+        })
+
+        financeZone:onPlayerInOut(function(isPointInside)
+            if isPointInside then
+                exports['qb-menu']:showHeader(financeMenu)
+            else
+                exports['qb-menu']:closeMenu()
+            end
+        end)
+    end)
+    CreateThread(function()
+        for k in pairs(Config.Shops) do
+            for i = 1, #Config.Shops[k]['ShowroomVehicles'] do
+                local model = GetHashKey(Config.Shops[k]["ShowroomVehicles"][i].defaultVehicle)
+                RequestModel(model)
+                while not HasModelLoaded(model) do
+                    Wait(0)
+                end
+                local veh = CreateVehicle(model, Config.Shops[k]["ShowroomVehicles"][i].coords.x, Config.Shops[k]["ShowroomVehicles"][i].coords.y, Config.Shops[k]["ShowroomVehicles"][i].coords.z, false, false)
+                SetModelAsNoLongerNeeded(model)
+                SetEntityAsMissionEntity(veh, true, true)
+                SetVehicleOnGroundProperly(veh)
+                SetEntityInvincible(veh, true)
+                SetVehicleDirtLevel(veh, 0.0)
+                SetVehicleDoorsLocked(veh, 3)
+                SetEntityHeading(veh, Config.Shops[k]["ShowroomVehicles"][i].coords.w)
+                FreezeEntityPosition(veh, true)
+                SetVehicleNumberPlateText(veh, 'BUY ME')
+                if Config.UsingTarget then createVehZones(k, veh) end
+            end
+            if not Config.UsingTarget then createVehZones(k) end
+        end
+    end)
 end
 
 -- Events
@@ -734,48 +780,5 @@ CreateThread(function()
             AddTextComponentSubstringPlayerName(Config.Shops[k]["ShopLabel"])
             EndTextCommandSetBlipName(Dealer)
         end
-    end
-end)
-
-CreateThread(function()
-    local financeZone = BoxZone:Create(Config.FinanceZone, 2.0, 2.0, {
-        name = "vehicleshop_financeZone",
-        offset = {0.0, 0.0, 0.0},
-        scale = {1.0, 1.0, 1.0},
-        minZ = Config.FinanceZone.z - 1,
-        maxZ = Config.FinanceZone.z + 1,
-        debugPoly = false,
-    })
-
-    financeZone:onPlayerInOut(function(isPointInside)
-        if isPointInside then
-            exports['qb-menu']:showHeader(financeMenu)
-        else
-            exports['qb-menu']:closeMenu()
-        end
-    end)
-end)
-
-CreateThread(function()
-    for k in pairs(Config.Shops) do
-        for i = 1, #Config.Shops[k]['ShowroomVehicles'] do
-            local model = GetHashKey(Config.Shops[k]["ShowroomVehicles"][i].defaultVehicle)
-            RequestModel(model)
-            while not HasModelLoaded(model) do
-                Wait(0)
-            end
-            local veh = CreateVehicle(model, Config.Shops[k]["ShowroomVehicles"][i].coords.x, Config.Shops[k]["ShowroomVehicles"][i].coords.y, Config.Shops[k]["ShowroomVehicles"][i].coords.z, false, false)
-            SetModelAsNoLongerNeeded(model)
-            SetEntityAsMissionEntity(veh, true, true)
-            SetVehicleOnGroundProperly(veh)
-            SetEntityInvincible(veh, true)
-            SetVehicleDirtLevel(veh, 0.0)
-            SetVehicleDoorsLocked(veh, 3)
-            SetEntityHeading(veh, Config.Shops[k]["ShowroomVehicles"][i].coords.w)
-            FreezeEntityPosition(veh, true)
-            SetVehicleNumberPlateText(veh, 'BUY ME')
-            if Config.UsingTarget then createVehZones(k, veh) end
-        end
-        if not Config.UsingTarget then createVehZones(k) end
     end
 end)
