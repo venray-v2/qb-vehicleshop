@@ -425,7 +425,7 @@ RegisterNetEvent('qb-vehicleshop:server:checkFinance', function()
     local query = 'SELECT * FROM player_vehicles WHERE citizenid = ? AND balance > 0 AND financetime < 1'
     local result = MySQL.query.await(query, {player.PlayerData.citizenid})
     if result[1] then
-        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.paymentduein', {time = Config.PaymentWarning}))
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('general.paymentduein', {time = Config.PaymentWarning}))
         Wait(Config.PaymentWarning * 60000)
         local vehicles = MySQL.query.await(query, {player.PlayerData.citizenid})
         for _, v in pairs(vehicles) do
