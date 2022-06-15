@@ -426,14 +426,14 @@ RegisterNetEvent('qb-vehicleshop:client:TestDrive', function()
                     inTestDrive = false
                     QBCore.Functions.DeleteVehicle(veh)
                     SetEntityCoords(PlayerPedId(), prevCoords)
-                    QBCore.Functions.Notify(Lang:t('general.freeuse_testdrive_complete'))
+                    QBCore.Functions.Notify(Lang:t('general.testdrive_complete'))
                 end
             end)
         end, Config.Shops[insideShop]["TestDriveSpawn"], false)
         createTestDriveReturn()
         startTestDriveTimer(Config.Shops[insideShop]["TestDriveTimeLimit"] * 60)
     else
-        QBCore.Functions.Notify(Lang:t('error.freeuse_testdrive_alreadyin'), 'error')
+        QBCore.Functions.Notify(Lang:t('error.testdrive_alreadyin'), 'error')
     end
 end)
 
