@@ -5,7 +5,7 @@ Config.FinanceCommission = 0.05 -- Percent that goes to sales person from a fina
 Config.FinanceZone = vector3(-29.53, -1103.67, 26.42)-- Where the finance menu is located
 Config.PaymentWarning = 10 -- time in minutes that player has to make payment before repo
 Config.PaymentInterval = 24 -- time in hours between payment being due
-Config.MinimumDown = 10 -- minimum percentage allowed down
+Config.MinimumDown = 65-- minimum percentage allowed down
 Config.MaximumPayments = 24 -- maximum payments allowed
 Config.Shops = {
     ['pdm'] = {
@@ -26,22 +26,19 @@ Config.Shops = {
             ['size'] = 2.75 -- size of the vehicles zones
         },
         ['Job'] = 'none', -- Name of job or none
-        ['ShopLabel'] = 'Premium Deluxe Motorsport', -- Blip name
+        ['ShopLabel'] = 'Cardealer venray', -- Blip name
         ['showBlip'] = true, -- true or false
         ['blipSprite'] = 326, -- Blip sprite
         ['blipColor'] = 3, -- Blip color
         ['Categories'] = {-- Categories available to browse
-            ['sportsclassics'] = 'Sports Classics',
-            ['sedans'] = 'Sedans',
-            ['coupes'] = 'Coupes',
-            ['suvs'] = 'SUVs',
-            ['offroad'] = 'Offroad',
-            ['muscle'] = 'Muscle',
-            ['compacts'] = 'Compacts',
-            ['motorcycles'] = 'Motorcycles',
-            ['vans'] = 'Vans',
-            ['cycles'] = 'Bicycles'
-        },
+        ['porsche'] = 'Porsche',
+        ['audi'] = 'Audi',
+        ['mercedes'] = 'Mercedes',
+        ['motoren'] = 'Motoren',
+        ['nissan'] = 'Nissan',
+        ['bmw'] = 'Bmw',
+
+    },
         ['TestDriveTimeLimit'] = 0.5, -- Time in minutes until the vehicle gets deleted
         ['Location'] = vector3(-45.67, -1098.34, 26.42), -- Blip Location
         ['ReturnLocation'] = vector3(-44.74, -1082.58, 26.68), -- Location to return vehicle, only enables if the vehicleshop has a job owned
@@ -50,43 +47,43 @@ Config.Shops = {
         ['ShowroomVehicles'] = {
             [1] = {
                 coords = vector4(-45.65, -1093.66, 25.44, 69.5), -- where the vehicle will spawn on display
-                defaultVehicle = 'adder', -- Default display vehicle
-                chosenVehicle = 'adder', -- Same as default but is dynamically changed when swapping vehicles
+                defaultVehicle = 'rs615', -- Default display vehicle
+                chosenVehicle = 'rs615', -- Same as default but is dynamically changed when swapping vehicles
             },
             [2] = {
                 coords = vector4(-48.27, -1101.86, 25.44, 294.5),
-                defaultVehicle = 'schafter2',
-                chosenVehicle = 'schafter2'
+                defaultVehicle = 'maj350',
+                chosenVehicle = 'maj350',
             },
             [3] = {
                 coords = vector4(-39.6, -1096.01, 25.44, 66.5),
-                defaultVehicle = 'comet2',
-                chosenVehicle = 'comet2'
+                defaultVehicle = 'M3e36',
+                chosenVehicle = 'M3e36',
             },
             [4] = {
                 coords = vector4(-51.21, -1096.77, 25.44, 254.5),
-                defaultVehicle = 'vigero',
-                chosenVehicle = 'vigero'
+                defaultVehicle = 'g65',
+                chosenVehicle = 'g65',
             },
             [5] = {
                 coords = vector4(-40.18, -1104.13, 25.44, 338.5),
-                defaultVehicle = 't20',
-                chosenVehicle = 't20'
+                defaultVehicle = 's14',
+                chosenVehicle = 's14',
             },
             [6] = {
                 coords = vector4(-43.31, -1099.02, 25.44, 52.5),
-                defaultVehicle = 'bati',
-                chosenVehicle = 'bati'
+                defaultVehicle = 'sanchez',
+                chosenVehicle = 'sanchez',
             },
             [7] = {
                 coords = vector4(-50.66, -1093.05, 25.44, 222.5),
-                defaultVehicle = 'bati',
-                chosenVehicle = 'bati'
+                defaultVehicle = '911r',
+                chosenVehicle = '911r',
             },
             [8] = {
                 coords = vector4(-44.28, -1102.47, 25.44, 298.5),
-                defaultVehicle = 'bati',
-                chosenVehicle = 'bati'
+                defaultVehicle = 'yzfr7',
+                chosenVehicle = 'yzfr7',
             }
         },
     },
@@ -115,7 +112,9 @@ Config.Shops = {
         ['blipColor'] = 3, -- Blip color
         ['Categories'] = {
             ['super'] = 'Super',
-            ['sports'] = 'Sports'
+            ['sports'] = 'Sports',
+            ['donor'] = 'Donateur'
+
         },
         ['TestDriveTimeLimit'] = 0.5,
         ['Location'] = vector3(-1255.6, -361.16, 36.91),
@@ -155,7 +154,7 @@ Config.Shops = {
         }
     }, -- Add your next table under this comma
     ['boats'] = {
-        ['Type'] = 'free-use', -- no player interaction is required to purchase a vehicle
+        ['Type'] = 'managed',  -- no player interaction is required to purchase a vehicle
         ['Zone'] = {
             ['Shape'] = {--polygon that surrounds the shop
                 vector2(-729.39, -1315.84),
@@ -167,7 +166,7 @@ Config.Shops = {
             ['maxZ'] = 5.0, -- max height of the shop zone
             ['size'] = 6.2 -- size of the vehicles zones
         },
-        ['Job'] = 'none', -- Name of job or none
+        ['Job'] = 'cardealer', -- Name of job or none
         ['ShopLabel'] = 'Marina Shop', -- Blip name
         ['showBlip'] = true, -- true or false
         ['blipSprite'] = 410, -- Blip sprite
@@ -203,7 +202,7 @@ Config.Shops = {
         },
     },
     ['air'] = {
-        ['Type'] = 'free-use', -- no player interaction is required to purchase a vehicle
+        ['Type'] = 'managed', -- no player interaction is required to purchase a vehicle
         ['Zone'] = {
             ['Shape'] = {--polygon that surrounds the shop
                 vector2(-1607.58, -3141.7),
@@ -215,7 +214,7 @@ Config.Shops = {
             ['maxZ'] = 16.99, -- max height of the shop zone
             ['size'] = 7.0, -- size of the vehicles zones
         },
-        ['Job'] = 'none', -- Name of job or none
+        ['Job'] = 'cardealer', -- Name of job or none
         ['ShopLabel'] = 'Air Shop', -- Blip name
         ['showBlip'] = true, -- true or false
         ['blipSprite'] = 251, -- Blip sprite
